@@ -138,7 +138,44 @@ public Action:Command_Deathchance(client, args)
     SetMenuTitle(menu, "Choose Entity");
 
     AddMenuItem(menu, "none", "Disable");
+
     AddMenuItem(menu, "fof_ghost", "Ghosts");
+    AddMenuItem(menu, "npc_horse", "Horses");
+    AddMenuItem(menu, "npc_gman", "Gman");
+    AddMenuItem(menu, "item_golden_skull", "Skull");
+
+    AddMenuItem(menu, "npc_concussiongrenade", "Concussion Grenade");
+    AddMenuItem(menu, "npc_contactgrenade", "Contact Grenade");
+    AddMenuItem(menu, "npc_grenade_bugbait", "Bugbait");
+    AddMenuItem(menu, "npc_handgrenade", "Hand Grenade");
+    AddMenuItem(menu, "npc_tripmine", "Tripmine");
+    AddMenuItem(menu, "bounce_bomb", "Bounce Bomb");
+    AddMenuItem(menu, "combine_bouncemine", "Bounce Mine");
+    AddMenuItem(menu, "combine_mine", "Mine");
+    AddMenuItem(menu, "env_ar2explosion", "AR2 Explosion");
+    AddMenuItem(menu, "grenade", "Grenade");
+    AddMenuItem(menu, "grenade_ar2", "Grenade AR2");
+    AddMenuItem(menu, "grenade_beam", "Grenade Beam");
+    AddMenuItem(menu, "grenade_beam_chaser", "Grenade Beam Chaser");
+    AddMenuItem(menu, "grenade_helicopter", "Grenade Helicopter");
+    AddMenuItem(menu, "grenade_homer", "Grenade Homer");
+
+    AddMenuItem(menu, "prop_vehicle_airboat", "Airboat");
+    AddMenuItem(menu, "prop_vehicle", "Jeep?");
+    AddMenuItem(menu, "prop_vehicle_apc", "APC");
+    AddMenuItem(menu, "prop_vehicle_crane", "Crane");
+    AddMenuItem(menu, "prop_vehicle_prisoner_pod", "Prisoner Pod");
+    AddMenuItem(menu, "prop_sphere", "Sphere");
+    AddMenuItem(menu, "prop_combine_ball", "Combine Ball");
+
+    AddMenuItem(menu, "raggib", "Gibs");
+
+    AddMenuItem(menu, "weapon_357", "357");
+    AddMenuItem(menu, "weapon_annabelle", "Annabelle");
+    AddMenuItem(menu, "weapon_ar2", "AR2");
+    AddMenuItem(menu, "weapon_crossbow", "Crossbow");
+    AddMenuItem(menu, "weapon_crowbar", "Crowbar");
+
     AddMenuItem(menu, "weapon_walker", "Colt Walker");
     AddMenuItem(menu, "weapon_sawedoff_shotgun", "Sawed-Off Shotgun");
     AddMenuItem(menu, "weapon_sharps", "Sharps Rifle");
