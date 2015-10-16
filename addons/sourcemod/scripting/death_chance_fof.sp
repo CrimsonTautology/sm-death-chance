@@ -104,11 +104,29 @@ SpawnEntity(client, String:class[])
     if(IsValidEntity(ent))
     {
         DispatchSpawn(ent);
+        AddEntityProperties(ent, class);
         TeleportEntity(ent, pos, ang, NULL_VECTOR);
         ActivateEntity(ent);
     }
 
     return ent;
+}
+
+//Add custom default properties to some entities
+AddEntityProperties(ent, String:class[])
+{
+    if(StrEqual(class, "item_whiskey"))
+    {
+        SetEntProp(ent, Prop_Data, "m_nHealth", 25);
+    }
+    else if(StrEqual(class, "item_potion"))
+    {
+        SetEntProp(ent, Prop_Data, "m_nPotion", 100);
+    }
+    else if(StrEqual(class, "item_potion_small"))
+    {
+        SetEntProp(ent, Prop_Data, "m_nPotion", 100);
+    }
 }
 
 public Action:Timer_RemoveRagdoll(Handle:timer, any:userid)
@@ -144,6 +162,9 @@ public Action:Command_Deathchance(client, args)
     AddMenuItem(menu, "npc_gman", "Gman");
     AddMenuItem(menu, "npc_citizen", "Citizen");
     AddMenuItem(menu, "item_golden_skull", "Skull");
+    AddMenuItem(menu, "item_whiskey", "Whiskey");
+    AddMenuItem(menu, "item_potion_small", "Potion (Small)");
+    AddMenuItem(menu, "item_potion", "Potion");
 
     AddMenuItem(menu, "npc_grenade_bugbait", "Bugbait");
     AddMenuItem(menu, "npc_handgrenade", "Hand Grenade");
