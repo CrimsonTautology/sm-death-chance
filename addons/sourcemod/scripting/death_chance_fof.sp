@@ -125,7 +125,16 @@ AddEntityProperties(ent, String:class[])
     }
     else if(StrEqual(class, "item_potion_small"))
     {
-        SetEntProp(ent, Prop_Data, "m_nPotion", 100);
+        SetEntProp(ent, Prop_Data, "m_nPotion", 25);
+    }
+    else if(StrEqual(class, "npc_horse"))
+    {
+        //Randomize the horse
+        new saddle = GetRandomInt(0, 1);
+        new skin   = GetRandomInt(0, 2);
+
+        SetEntProp(ent, Prop_Data, "m_bSaddle", saddle);
+        SetEntProp(ent, Prop_Data, "m_nSkin", skin);
     }
 }
 
