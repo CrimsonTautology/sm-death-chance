@@ -3,7 +3,7 @@
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION "1.0.0"
+#define PLUGIN_VERSION "1.0.1"
 #define PLUGIN_NAME  "[FoF] Death Chance"
 
 #define CLASS_NAME_SIZE 32
@@ -24,12 +24,12 @@ new Handle:g_Cvar_Ammount     = INVALID_HANDLE;
 
 public OnPluginStart()
 {
-    CreateConVar("sm_death_chance_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_PLUGIN | FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+    CreateConVar("sm_death_chance_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
     g_Cvar_Enabled = CreateConVar(
             "sm_death_chance",
             "1",
             "Set to 1 to enable the death chance plugin",
-            FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY,
+            FCVAR_REPLICATED | FCVAR_NOTIFY,
             true,
             0.0,
             true,
@@ -38,13 +38,13 @@ public OnPluginStart()
             "sm_death_chance_class",
             "none",
             "The class name of the entity to spawn",
-            FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY
+            FCVAR_REPLICATED | FCVAR_NOTIFY
             );
     g_Cvar_Percentage = CreateConVar(
             "sm_death_chance_percentage",
             "0.25",
             "Percentage of times that this entity should spawn (0.0 = 0%, 1.0 = 100%)",
-            FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY,
+            FCVAR_REPLICATED | FCVAR_NOTIFY,
             true,
             0.0,
             true,
@@ -53,7 +53,7 @@ public OnPluginStart()
             "sm_death_chance_ammount",
             "1",
             "The Upper limmit for the ammount of this item that should spawn.",
-            FCVAR_PLUGIN | FCVAR_REPLICATED | FCVAR_NOTIFY,
+            FCVAR_REPLICATED | FCVAR_NOTIFY,
             true,
             1.0,
             true,
