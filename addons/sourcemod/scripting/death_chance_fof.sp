@@ -20,7 +20,6 @@ public Plugin:myinfo =
 new Handle:g_Cvar_Enabled     = INVALID_HANDLE;
 new Handle:g_Cvar_TargetClass = INVALID_HANDLE;
 new Handle:g_Cvar_Percentage  = INVALID_HANDLE;
-new Handle:g_Cvar_Ammount     = INVALID_HANDLE;
 
 public OnPluginStart()
 {
@@ -49,15 +48,6 @@ public OnPluginStart()
             0.0,
             true,
             1.0);
-    g_Cvar_Ammount = CreateConVar(
-            "sm_death_chance_ammount",
-            "1",
-            "The Upper limmit for the ammount of this item that should spawn.",
-            FCVAR_REPLICATED | FCVAR_NOTIFY,
-            true,
-            1.0,
-            true,
-            10.0);
 
     RegAdminCmd("sm_deathchance", Command_Deathchance, ADMFLAG_SLAY, "[ADMIN] Set entity to spawn on death.");
 
@@ -198,7 +188,6 @@ public DeathchanceMenuHandler(Handle:menu, MenuAction:action, param1, param2)
     {
         case MenuAction_Select:
             {
-                new client = param1;
                 new String:class[32];
                 GetMenuItem(menu, param2, class, sizeof(class));
 
