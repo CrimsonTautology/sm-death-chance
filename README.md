@@ -1,10 +1,10 @@
 # sm-death-chance
 
 ![Build Status](https://github.com/CrimsonTautology/sm-death-chance/workflows/Build%20plugins/badge.svg?style=flat-square)
-[![GitHub stars](https://img.shields.io/github/stars/CrimsonTautology/sm-death-chance?style=flat-square)](https://github.com/CrimsonTautology/sm-plugin-name/stargazers)
-[![GitHub issues](https://img.shields.io/github/issues/CrimsonTautology/sm-death-chance.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/CrimsonTautology/sm-plugin-name/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/CrimsonTautology/sm-death-chance.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/CrimsonTautology/sm-plugin-name/pulls)
-[![GitHub All Releases](https://img.shields.io/github/downloads/CrimsonTautology/sm-death-chance/total.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/CrimsonTautology/sm-plugin-name/releases)
+[![GitHub stars](https://img.shields.io/github/stars/CrimsonTautology/sm-death-chance?style=flat-square)](https://github.com/CrimsonTautology/sm-death-chance/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/CrimsonTautology/sm-death-chance.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/CrimsonTautology/sm-death-chance/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/CrimsonTautology/sm-death-chance.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/CrimsonTautology/sm-death-chance/pulls)
+[![GitHub All Releases](https://img.shields.io/github/downloads/CrimsonTautology/sm-death-chance/total.svg?style=flat-square&logo=github&logoColor=white)](https://github.com/CrimsonTautology/sm-death-chance/releases)
 
 Adds chance to spawn entity on player death
 
