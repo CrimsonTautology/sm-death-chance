@@ -1,29 +1,42 @@
+/**
+ * vim: set ts=4 :
+ * =============================================================================
+ * Death Chance
+ * Adds chance to spawn entity on player death
+ *
+ * Copyright 2021 CrimsonTautology
+ * =============================================================================
+ *
+ */
+
 #pragma semicolon 1
+#pragma newdecls required
 
 #include <sourcemod>
 #include <sdktools>
 
-#define PLUGIN_VERSION "1.0.1"
+#define PLUGIN_VERSION "1.10.0"
 #define PLUGIN_NAME  "[FoF] Death Chance"
 
 #define CLASS_NAME_SIZE 32
 
-public Plugin:myinfo =
+public Plugin myinfo =
 {
     name = PLUGIN_NAME,
     author = "CrimsonTautology",
     description = "Adds chance to spawn entity on player death",
     version = PLUGIN_VERSION,
-    url = "http://github.com/CrimsonTautology/sm_death_chance"
+    url = "http://github.com/CrimsonTautology/sm-death-chance"
 };
 
-new Handle:g_Cvar_Enabled     = INVALID_HANDLE;
-new Handle:g_Cvar_TargetClass = INVALID_HANDLE;
-new Handle:g_Cvar_Percentage  = INVALID_HANDLE;
+ConVar g_Cvar_Enabled;
+ConVar g_Cvar_TargetClass;
+ConVar g_Cvar_Percentage;
 
-public OnPluginStart()
+public void OnPluginStart()
 {
-    CreateConVar("sm_death_chance_version", PLUGIN_VERSION, PLUGIN_NAME, FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
+    CreateConVar("sm_death_chance_version", PLUGIN_VERSION, PLUGIN_NAME,
+            FCVAR_SPONLY | FCVAR_REPLICATED | FCVAR_NOTIFY | FCVAR_DONTRECORD);
     g_Cvar_Enabled = CreateConVar(
             "sm_death_chance",
             "1",
@@ -49,48 +62,50 @@ public OnPluginStart()
             true,
             1.0);
 
-    RegAdminCmd("sm_deathchance", Command_Deathchance, ADMFLAG_SLAY, "[ADMIN] Set entity to spawn on death.");
+    RegAdminCmd("sm_deathchance", Command_Deathchance, ADMFLAG_SLAY,
+            "[ADMIN] Set entity to spawn on death.");
 
     HookEvent("player_death", Event_PlayerDeath);
 
     AutoExecConfig();
 }
 
-bool:IsDeathChanceEnabled()
+bool IsDeathChanceEnabled()
 {
-    return GetConVarBool(g_Cvar_Enabled);
+    return g_Cvar_Enabled.BoolValue;
 }
 
-bool:DeathChanceRoll()
+bool DeathChanceRoll()
 {
-    return GetURandomFloat() < GetConVarFloat(g_Cvar_Percentage);
+    return GetURandomFloat() < g_Cvar_Percentage.FloatValue;
 }
 
-public Event_PlayerDeath(Handle:event, const String:name[], bool:dontBroadcast)
+int Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
     if(!IsDeathChanceEnabled()) return;
     if(!DeathChanceRoll()) return;
 
-    new client = GetClientOfUserId(GetEventInt(event, "userid"));
+    int client = GetClientOfUserId(event.GetInt("userid"));
 
-    new String:class[CLASS_NAME_SIZE];
-    GetConVarString(g_Cvar_TargetClass, class, sizeof(class));
+    char class[CLASS_NAME_SIZE];
+    g_Cvar_TargetClass.GetString(class, sizeof(class));
 
-    // Remove ragdoll during the next frame
+    // remove ragdoll during the next frame
     CreateTimer(0.0, Timer_RemoveRagdoll, client, TIMER_FLAG_NO_MAPCHANGE);
 
-    new ent = SpawnEntity(client, class);
-    CreateTimer(60.0, Timer_RemoveEntity, EntIndexToEntRef(ent), TIMER_FLAG_NO_MAPCHANGE);
+    int ent = SpawnEntity(client, class);
+    CreateTimer(60.0, Timer_RemoveEntity, EntIndexToEntRef(ent),
+            TIMER_FLAG_NO_MAPCHANGE);
 }
 
-SpawnEntity(client, String:class[])
+int SpawnEntity(int client, char[] class)
 {
-    new Float:pos[3], Float:ang[3];
+    float pos[3], ang[3];
 
     GetClientEyePosition(client, pos);
     GetClientAbsAngles(client, ang);
 
-    new ent = CreateEntityByName(class);
+    int ent = CreateEntityByName(class);
     if(IsValidEntity(ent))
     {
         DispatchSpawn(ent);
@@ -102,8 +117,8 @@ SpawnEntity(client, String:class[])
     return ent;
 }
 
-//Add custom default properties to some entities
-AddEntityProperties(ent, String:class[])
+// add custom default properties to some entities
+void AddEntityProperties(int ent, char[] class)
 {
     if(StrEqual(class, "item_whiskey"))
     {
@@ -119,86 +134,87 @@ AddEntityProperties(ent, String:class[])
     }
     else if(StrEqual(class, "npc_horse"))
     {
-        //Randomize the horse
-        new saddle = GetRandomInt(0, 1);
-        new skin   = GetRandomInt(0, 2);
+        // randomize the horse
+        int saddle = GetRandomInt(0, 1);
+        int skin = GetRandomInt(0, 2);
 
         SetEntProp(ent, Prop_Data, "m_bSaddle", saddle);
         SetEntProp(ent, Prop_Data, "m_nSkin", skin);
     }
 }
 
-public Action:Timer_RemoveRagdoll(Handle:timer, any:userid)
+Action Timer_RemoveRagdoll(Handle timer, any userid)
 {
-    new client = GetClientOfUserId(userid);
+    int client = GetClientOfUserId(userid);
     if (!client) return;
-    new ragdoll = GetEntPropEnt(client, Prop_Send, "m_hRagdoll");
+
+    int ragdoll = GetEntPropEnt(client, Prop_Send, "m_hRagdoll");
     if (ragdoll <= MaxClients) return;
+
     AcceptEntityInput(ragdoll, "Kill");
 }
 
-public Action:Timer_RemoveEntity(Handle:timer, any:ref)
+Action Timer_RemoveEntity(Handle timer, any ref)
 {
-    new ent = EntRefToEntIndex(ref);
+    int ent = EntRefToEntIndex(ref);
     if (ent <= MaxClients) return;
     AcceptEntityInput(ent, "Kill");
 }
 
-
-public Action:Command_Deathchance(client, args)
+Action Command_Deathchance(int client, int args)
 {
     if(client <= 0) return Plugin_Handled;
     if(!IsClientInGame(client)) return Plugin_Handled;
 
-    new Handle:menu = CreateMenu(DeathchanceMenuHandler);
+    Menu menu = new Menu(DeathchanceMenuHandler);
 
-    SetMenuTitle(menu, "Choose Entity");
+    menu.SetTitle("Choose Entity");
 
-    AddMenuItem(menu, "none", "Disable");
+    menu.AddItem("none", "Disable");
 
-    AddMenuItem(menu, "fof_ghost", "Ghosts");
-    AddMenuItem(menu, "npc_horse", "Horses");
-    AddMenuItem(menu, "npc_gman", "Gman");
-    AddMenuItem(menu, "npc_citizen", "Citizen");
-    AddMenuItem(menu, "item_golden_skull", "Skull");
-    AddMenuItem(menu, "item_whiskey", "Whiskey");
-    AddMenuItem(menu, "item_potion_small", "Potion (Small)");
-    AddMenuItem(menu, "item_potion", "Potion");
+    menu.AddItem("fof_ghost", "Ghosts");
+    menu.AddItem("npc_horse", "Horses");
+    menu.AddItem("npc_gman", "Gman");
+    menu.AddItem("npc_citizen", "Citizen");
+    menu.AddItem("item_golden_skull", "Skull");
+    menu.AddItem("item_whiskey", "Whiskey");
+    menu.AddItem("item_potion_small", "Potion (Small)");
+    menu.AddItem("item_potion", "Potion");
 
-    AddMenuItem(menu, "npc_grenade_bugbait", "Bugbait");
-    AddMenuItem(menu, "npc_handgrenade", "Hand Grenade");
-    AddMenuItem(menu, "bounce_bomb", "Bounce Bomb");
-    AddMenuItem(menu, "combine_bouncemine", "Bounce Mine");
-    AddMenuItem(menu, "combine_mine", "Mine");
-    AddMenuItem(menu, "grenade_ar2", "Grenade AR2");
-    AddMenuItem(menu, "grenade_helicopter", "Grenade Helicopter");
+    menu.AddItem("npc_grenade_bugbait", "Bugbait");
+    menu.AddItem("npc_handgrenade", "Hand Grenade");
+    menu.AddItem("bounce_bomb", "Bounce Bomb");
+    menu.AddItem("combine_bouncemine", "Bounce Mine");
+    menu.AddItem("combine_mine", "Mine");
+    menu.AddItem("grenade_ar2", "Grenade AR2");
+    menu.AddItem("grenade_helicopter", "Grenade Helicopter");
 
-    AddMenuItem(menu, "weapon_walker", "Colt Walker");
-    AddMenuItem(menu, "weapon_sawedoff_shotgun", "Sawed-Off Shotgun");
-    AddMenuItem(menu, "weapon_sharps", "Sharps Rifle");
+    menu.AddItem("weapon_walker", "Colt Walker");
+    menu.AddItem("weapon_sawedoff_shotgun", "Sawed-Off Shotgun");
+    menu.AddItem("weapon_sharps", "Sharps Rifle");
 
-    DisplayMenu(menu, client, 20);
+    menu.Display(client, 20);
 
     return Plugin_Handled;
 }
 
-public DeathchanceMenuHandler(Handle:menu, MenuAction:action, param1, param2)
+int DeathchanceMenuHandler(Menu menu, MenuAction action, int param1, int param2)
 {
     switch (action)
     {
         case MenuAction_Select:
             {
-                new String:class[32];
-                GetMenuItem(menu, param2, class, sizeof(class));
+                char class[32];
+                menu.GetItem(param2, class, sizeof(class));
 
                 if(StrEqual(class, "none"))
                 {
-                    SetConVarBool(g_Cvar_Enabled, false);
+                    g_Cvar_Enabled.SetBool(false);
                 }else{
-                    SetConVarString(g_Cvar_TargetClass, class);
-                    SetConVarBool(g_Cvar_Enabled, true);
+                    g_Cvar_TargetClass.SetString(class);
+                    g_Cvar_Enabled.BoolValue = true;
                 }
             }
-        case MenuAction_End: CloseHandle(menu);
+        case MenuAction_End: delete menu;
     }
 }
