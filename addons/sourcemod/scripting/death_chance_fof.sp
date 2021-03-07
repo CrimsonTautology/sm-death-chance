@@ -85,17 +85,29 @@ int Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
     if(!IsDeathChanceEnabled()) return;
     if(!DeathChanceRoll()) return;
 
-    int client = GetClientOfUserId(event.GetInt("userid"));
+    int userid = event.GetInt("userid");
+    int client = GetClientOfUserId(userid);
 
     char class[CLASS_NAME_SIZE];
     g_Cvar_TargetClass.GetString(class, sizeof(class));
 
     // remove ragdoll during the next frame
-    CreateTimer(0.0, Timer_RemoveRagdoll, client, TIMER_FLAG_NO_MAPCHANGE);
+    RequestFrame(RemoveRagdollDelay, userid);
 
     int ent = SpawnEntity(client, class);
     CreateTimer(60.0, Timer_RemoveEntity, EntIndexToEntRef(ent),
             TIMER_FLAG_NO_MAPCHANGE);
+}
+
+void RemoveRagdollDelay(int userid)
+{
+    int client = GetClientOfUserId(userid);
+    if(!(0 < client < MaxClients)) return;
+
+    int ragdoll = GetEntPropEnt(client, Prop_Send, "m_hRagdoll");
+    if (ragdoll <= MaxClients) return;
+
+    AcceptEntityInput(ragdoll, "Kill");
 }
 
 int SpawnEntity(int client, char[] class)
@@ -141,17 +153,6 @@ void AddEntityProperties(int ent, char[] class)
         SetEntProp(ent, Prop_Data, "m_bSaddle", saddle);
         SetEntProp(ent, Prop_Data, "m_nSkin", skin);
     }
-}
-
-Action Timer_RemoveRagdoll(Handle timer, any userid)
-{
-    int client = GetClientOfUserId(userid);
-    if (!client) return;
-
-    int ragdoll = GetEntPropEnt(client, Prop_Send, "m_hRagdoll");
-    if (ragdoll <= MaxClients) return;
-
-    AcceptEntityInput(ragdoll, "Kill");
 }
 
 Action Timer_RemoveEntity(Handle timer, any ref)
