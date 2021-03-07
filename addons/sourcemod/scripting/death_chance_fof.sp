@@ -102,7 +102,7 @@ int Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 void RemoveRagdollDelay(int userid)
 {
     int client = GetClientOfUserId(userid);
-    if(!(0 < client < MaxClients)) return;
+    if(!(0 < client <= MaxClients)) return;
 
     int ragdoll = GetEntPropEnt(client, Prop_Send, "m_hRagdoll");
     if (ragdoll <= MaxClients) return;
